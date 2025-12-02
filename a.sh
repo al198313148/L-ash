@@ -63,9 +63,10 @@ cd ~/share
 
 # 定义仓库URL数组
 repo_urls=(
-    "https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
+    "https://lkms-hpygbgjhfhc.hf.space/https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
     "https://py.bpbpanel.ip-ddns.com/https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
-    "http://exp.com/share/4513173c-abd2-4f26-9e86-487d91aa5e71"
+    "https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
+    "http://file.al1983.netlib.re/share/a0f56f0c-ee61-4c7a-8e90-4590ade78cdf"
 )
 
 # 尝试下载并解压到share根目录
@@ -139,9 +140,10 @@ else
     
     # 定义deb包URL数组
     deb_urls=(
-        "https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
+        "https://lkms-hpygbgjhfhc.hf.space/https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
         "https://py.bpbpanel.ip-ddns.com/https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
-        "https://py.com/https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
+        "https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
+        "http://file.al1983.netlib.re/share/0412d9e1-0233-4f01-ad93-a1a061eed5ee"
     )
     
     # 尝试下载并安装deb包
