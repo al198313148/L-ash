@@ -36,21 +36,156 @@ sudo_exec() {
     return 1
 }
 
-# 0. 安装nodejs
+# 函数：检查Node.js安装是否成功
+check_node_installed() {
+    if command -v node &> /dev/null && command -v npm &> /dev/null; then
+        node_version=$(node -v 2>/dev/null)
+        npm_version=$(npm -v 2>/dev/null)
+        
+        if [[ -n "$node_version" && -n "$npm_version" ]]; then
+            echo "Node.js安装成功:"
+            echo "  Node.js版本: $node_version"
+            echo "  npm版本: $npm_version"
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# 函数：使用NodeSource安装
+install_node_nodesource() {
+    echo "=== 方法1: 使用NodeSource安装Node.js ==="
+    sudo_exec "apt update"
+    sudo_exec "apt install -y curl unzip wget gnupg"
+    
+    # 下载并安装NodeSource setup脚本
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    sudo_exec "apt-get install -y nodejs"
+    
+    if check_node_installed; then
+        echo "NodeSource安装成功"
+        return 0
+    else
+        echo "NodeSource安装失败"
+        return 1
+    fi
+}
+
+# 函数：使用二进制包安装
+install_node_binary() {
+    echo "=== 方法2: 使用二进制包安装Node.js ==="
+    
+    # 下载Node.js二进制包
+    NODE_URL="https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-arm64.tar.xz"
+    NODE_TAR="node-v18.20.8-linux-arm64.tar.xz"
+    NODE_DIR="node-v18.20.8-linux-arm64"
+    
+    echo "下载Node.js二进制包..."
+    if ! wget -O "$NODE_TAR" "$NODE_URL" 2>/dev/null && ! curl -L -o "$NODE_TAR" "$NODE_URL" 2>/dev/null; then
+        echo "下载Node.js二进制包失败"
+        return 1
+    fi
+    
+    echo "解压Node.js二进制包..."
+    tar -xf "$NODE_TAR"
+    
+    echo "安装Node.js..."
+    # 创建目标目录
+    sudo_exec "mkdir -p /usr/local/lib/nodejs"
+    
+    # 复制文件
+    sudo_exec "cp -R $NODE_DIR/* /usr/local/lib/nodejs/"
+    
+    # 创建符号链接
+    sudo_exec "ln -sf /usr/local/lib/nodejs/bin/node /usr/local/bin/node"
+    sudo_exec "ln -sf /usr/local/lib/nodejs/bin/npm /usr/local/bin/npm"
+    sudo_exec "ln -sf /usr/local/lib/nodejs/bin/npx /usr/local/bin/npx"
+    
+    # 清理临时文件
+    rm -rf "$NODE_TAR" "$NODE_DIR"
+    
+    # 添加到PATH（当前会话）
+    export PATH=/usr/local/lib/nodejs/bin:$PATH
+    
+    if check_node_installed; then
+        echo "二进制包安装成功"
+        return 0
+    else
+        echo "二进制包安装失败"
+        return 1
+    fi
+}
+
+# 函数：使用NVM安装
+install_node_nvm() {
+    echo "=== 方法3: 使用NVM安装Node.js ==="
+    
+    # 安装NVM
+    echo "安装NVM..."
+    if ! curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash 2>/dev/null && \
+       ! wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash 2>/dev/null; then
+        echo "NVM安装失败"
+        return 1
+    fi
+    
+    # 加载NVM
+    export NVM_DIR="$HOME/.nvm"
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+        . "$NVM_DIR/nvm.sh"
+    elif [ -s "$HOME/.nvm/nvm.sh" ]; then
+        . "$HOME/.nvm/nvm.sh"
+    fi
+    
+    # 安装Node.js
+    echo "使用NVM安装Node.js..."
+    nvm install 18.20.8
+    nvm use 18.20.8
+    nvm alias default 18.20.8
+    
+    if check_node_installed; then
+        echo "NVM安装成功"
+        return 0
+    else
+        echo "NVM安装失败"
+        return 1
+    fi
+}
+
+# 0. 安装nodejs（三种方式）
 echo "=== 开始安装 Node.js ==="
-sudo_exec "apt update"
-sudo_exec "apt install -y curl unzip wget"
 
-# 下载并安装NodeSource setup脚本
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-
-sudo_exec "apt-get install -y nodejs"
-
-# 验证安装
-echo "Node.js 版本:"
-node -v
-echo "npm 版本:"
-npm -v
+# 先检查是否已经安装
+if check_node_installed; then
+    echo "Node.js 已经安装"
+else
+    echo "Node.js 未安装，开始安装..."
+    
+    # 方法1: 使用NodeSource安装
+    if ! install_node_nodesource; then
+        echo "=== 方法1失败，尝试方法2 ==="
+        
+        # 方法2: 使用二进制包安装
+        if ! install_node_binary; then
+            echo "=== 方法2失败，尝试方法3 ==="
+            
+            # 方法3: 使用NVM安装
+            if ! install_node_nvm; then
+                echo "=== 所有Node.js安装方法都失败 ==="
+                echo "请手动安装Node.js后重新运行脚本"
+                exit 1
+            fi
+        fi
+    fi
+    
+    # 最终验证
+    echo "=== 最终验证Node.js安装 ==="
+    if check_node_installed; then
+        echo "Node.js安装成功！"
+    else
+        echo "警告: Node.js安装可能存在问题"
+        echo "请检查环境变量和安装路径"
+    fi
+fi
 
 # 1. 创建share文件夹并赋权
 echo "=== 创建share文件夹 ==="
