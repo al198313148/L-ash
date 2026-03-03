@@ -198,7 +198,7 @@ cd ~/share
 
 # 定义仓库URL数组
 repo_urls=(
-    "https://lkms-hpygbgjhfhc.hf.space/https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
+    "https://anlv001-firsapps.hf.space/https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
     "https://py.bpbpanel.ip-ddns.com/https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
     "https://github.com/al198313148/L-share-p/archive/refs/heads/main.zip"
     "http://file.al1983.netlib.re/share/a0f56f0c-ee61-4c7a-8e90-4590ade78cdf"
@@ -275,7 +275,7 @@ else
     
     # 定义deb包URL数组
     deb_urls=(
-        "https://lkms-hpygbgjhfhc.hf.space/https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
+        "https://anlv001-firsapps.hf.space/https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
         "https://py.bpbpanel.ip-ddns.com/https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
         "https://github.com/cloudflare/cloudflared/releases/download/2025.11.0/cloudflared-linux-arm64.deb"
         "http://file.al1983.netlib.re/share/0412d9e1-0233-4f01-ad93-a1a061eed5ee"
